@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>White Dune Canyon — Planning Equipe Restaurant</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f3f0;
+    color: #222;
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .brand-icon { font-size: 28px; letter-spacing: 4px; color: #555; margin-bottom: 4px; }
+  .brand-name {
+    font-size: 13px;
+    letter-spacing: 4px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  .title-banner {
+    display: inline-block;
+    border: 2px solid #333;
+    padding: 10px 40px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #222;
+    background: #fff;
+  }
+
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1.5px solid #ccc;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #333;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn:hover { background: #f0f0f0; border-color: #aaa; }
+  .btn-primary { background: #2c2c2c; color: #fff; border-color: #2c2c2c; }
+  .btn-primary:hover { background: #444; border-color: #444; }
+  .btn-danger { border-color: #e57373; color: #c62828; background: #fff; }
+  .btn-danger:hover { background: #fff3f3; }
+  .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .hint { font-size: 12px; color: #888; margin-left: auto; }
+
+  .tbl-wrap { overflow-x: auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    min-width: 720px;
+  }
+
+  thead th {
+    background: #2c2c2c;
+    color: #fff;
+    padding: 10px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-align: center;
+    border: 1px solid #444;
+  }
+
+  td { border: 1px solid #ddd; vertical-align: middle; }
+
+  col.col-cat  { width: 90px; }
+  col.col-name { width: 170px; }
+  col.col-day  { width: 82px; }
+  col.col-del  { width: 36px; }
+
+  .cat-cell { text-align: center; }
+  .cat-select {
+    width: 100%;
+    border: none;
+    background: #eeeeff;
+    font-size: 11px;
+    font-weight: 600;
+    color: #333;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 10px 4px;
+    text-align: center;
+    outline: none;
+    appearance: none;
+  }
+  .cat-select:focus { background: #ddddf8; }
+
+  .name-cell { padding: 2px 6px; }
+  .name-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 600;
+    color: #222;
+    font-family: inherit;
+    padding: 8px 4px;
+    outline: none;
+    text-transform: uppercase;
+  }
+  .name-input:focus { background: #f5f5f5; border-radius: 4px; }
+  .name-input::placeholder { color: #bbb; font-weight: 400; text-transform: none; }
+
+  .shift-cell {
+    text-align: center;
+    cursor: pointer;
+    padding: 10px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    user-select: none;
+    transition: filter 0.1s;
+    position: relative;
+  }
+  .shift-cell:hover { filter: brightness(0.93); }
+  .shift-cell:active { filter: brightness(0.85); transform: scale(0.97); }
+
+  .s-SHIFT1   { background: #d9f0d9; color: #1b5e20; }
+  .s-SHIFT2   { background: #fffde7; color: #e65100; }
+  .s-COUPURE  { background: #ffffff; color: #333; }
+  .s-OFF      { background: #ffe0b2; color: #b71c1c; }
+
+  tr:hover td { filter: brightness(0.97); }
+
+  .del-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 8px 4px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.15s;
+  }
+  .del-btn:hover { color: #e53935; }
+  .del-btn svg { width: 14px; height: 14px; }
+
+  .note {
+    text-align: center;
+    font-size: 11.5px;
+    color: #c62828;
+    font-style: italic;
+    margin: 12px 0;
+  }
+
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 14px 0 4px;
+  }
+  .legend-title { font-size: 12px; font-weight: 600; color: #555; }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #555;
+  }
+  .legend-box {
+    width: 70px;
+    height: 24px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .footer-btns { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #2c2c2c;
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: transform 0.3s ease;
+    z-index: 999;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="brand-icon">~ ~ ~</div>
+    <div class="brand-name">WHITE DUNE CANYON</div>
+    <div class="title-banner">EQUIPE RESTAURANT</div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" onclick="addRow()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Ajouter employé
+    </button>
+    <button class="btn btn-primary" onclick="exportDocx()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Exporter .docx
+    </button>
+    <span class="hint">💡 Cliquez sur une case de shift pour changer</span>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <colgroup>
+        <col class="col-cat">
+        <col class="col-name">
+        <col class="col-day"><col class="col-day"><col class="col-day">
+        <col class="col-day"><col class="col-day"><col class="col-day"><col class="col-day">
+        <col class="col-del">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Hébergement</th>
+          <th>Nom et Prénom</th>
+          <th>LUNDI</th><th>MARDI</th><th>MERCREDI</th>
+          <th>JEUDI</th><th>VENDREDI</th><th>SAMEDI</th><th>DIMANCHE</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="footer-btns">
+    <button class="btn" onclick="addRow()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Ajouter une ligne
+    </button>
+  </div>
+
+  <div class="note">Les horaires de coupure sont fixés avec le chef de service, en coordination avec la direction.</div>
+
+  <div class="legend">
+    <span class="legend-title">Légende :</span>
+    <div class="legend-item">
+      <div class="legend-box s-COUPURE">COUPURE</div>
+      <span>Variable</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-box s-SHIFT1">SHIFT 1</div>
+      <span>08h00 – 16h30</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-box s-SHIFT2">SHIFT 2</div>
+      <span>15h30 – Fin de service</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-box s-OFF">OFF</div>
+      <span>Repos</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DAYS = ['LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI','DIMANCHE'];
+const SHIFTS = ['SHIFT1','SHIFT2','COUPURE','OFF'];
+const LABELS = { SHIFT1:'SHIFT 1', SHIFT2:'SHIFT 2', COUPURE:'COUPURE', OFF:'OFF' };
+const CATS = ['Hôtel','VILLE','STAGIAIRE'];
+
+let employees = [
+  { cat:'Hôtel',     name:'MOULAY MUSTAPHA RAFIK',    days:['COUPURE','COUPURE','COUPURE','OFF','COUPURE','COUPURE','COUPURE'] },
+  { cat:'Hôtel',     name:'MOHAMMED AMINE EL HASSAR', days:['SHIFT1','OFF','SHIFT1','SHIFT1','SHIFT1','SHIFT1','SHIFT1'] },
+  { cat:'VILLE',     name:'FODE MANSARE',             days:['SHIFT1','SHIFT1','SHIFT1','SHIFT1','OFF','SHIFT1','SHIFT1'] },
+  { cat:'VILLE',     name:'MOHAMED EL HAMSALI',       days:['SHIFT1','SHIFT1','OFF','SHIFT1','SHIFT1','SHIFT1','SHIFT1'] },
+  { cat:'VILLE',     name:'YOUSSEF ELRCHICHA',        days:['SHIFT2','OFF','SHIFT2','SHIFT2','SHIFT2','SHIFT2','SHIFT2'] },
+  { cat:'VILLE',     name:'ABDERRAHMANE ELABBOUBI',   days:['SHIFT2','SHIFT2','SHIFT2','SHIFT2','SHIFT2','OFF','SHIFT2'] },
+  { cat:'STAGIAIRE', name:'SOUMAYA MAATA',            days:['SHIFT1','OFF','SHIFT1','SHIFT1','SHIFT1','SHIFT1','SHIFT1'] },
+];
+
+function cycleShift(ri, di) {
+  employees[ri].days[di] = SHIFTS[(SHIFTS.indexOf(employees[ri].days[di]) + 1) % SHIFTS.length];
+  render();
+}
+
+function deleteRow(ri) {
+  employees.splice(ri, 1);
+  render();
+  showToast('Ligne supprimée');
+}
+
+function addRow() {
+  employees.push({ cat:'VILLE', name:'', days:['SHIFT1','SHIFT1','SHIFT1','SHIFT1','SHIFT1','SHIFT1','SHIFT1'] });
+  render();
+  const inputs = document.querySelectorAll('.name-input');
+  if (inputs.length) inputs[inputs.length - 1].focus();
+}
+
+function render() {
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+  employees.forEach((emp, ri) => {
+    const tr = document.createElement('tr');
+
+    // Category
+    const catTd = document.createElement('td');
+    catTd.className = 'cat-cell';
+    const sel = document.createElement('select');
+    sel.className = 'cat-select';
+    CATS.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c; o.textContent = c;
+      if (c === emp.cat) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.onchange = e => { employees[ri].cat = e.target.value; };
+    catTd.appendChild(sel);
+    tr.appendChild(catTd);
+
+    // Name
+    const nameTd = document.createElement('td');
+    nameTd.className = 'name-cell';
+    const inp = document.createElement('input');
+    inp.className = 'name-input';
+    inp.value = emp.name;
+    inp.placeholder = 'Nom et Prénom';
+    inp.oninput = e => { employees[ri].name = e.target.value; };
+    nameTd.appendChild(inp);
+    tr.appendChild(nameTd);
+
+    // Days
+    emp.days.forEach((shift, di) => {
+      const td = document.createElement('td');
+      td.className = `shift-cell s-${shift}`;
+      td.textContent = LABELS[shift];
+      td.title = 'Cliquer pour changer le shift';
+      td.onclick = () => cycleShift(ri, di);
+      tr.appendChild(td);
+    });
+
+    // Delete
+    const delTd = document.createElement('td');
+    const delBtn = document.createElement('button');
+    delBtn.className = 'del-btn';
+    delBtn.title = 'Supprimer';
+    delBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>`;
+    delBtn.onclick = () => deleteRow(ri);
+    delTd.appendChild(delBtn);
+    tr.appendChild(delTd);
+
+    tbody.appendChild(tr);
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── DOCX Export
+async function exportDocx() {
+  if (!window.docx) { showToast('Librairie docx non chargée'); return; }
+  const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+          AlignmentType, BorderStyle, WidthType, ShadingType, VerticalAlign,
+          PageOrientation } = docx;
+
+  const brd = { style: BorderStyle.SINGLE, size: 4, color: "999999" };
+  const borders = { top:brd, bottom:brd, left:brd, right:brd };
+  const outerBrd = { style: BorderStyle.SINGLE, size: 8, color: "333333" };
+  const outerBorders = { top:outerBrd, bottom:outerBrd, left:outerBrd, right:outerBrd };
+
+  const CONTENT = 15398;
+  const C0 = 1100, C1 = 2000, CD = Math.floor((CONTENT - C0 - C1) / 7);
+  const COLS = [C0, C1, CD, CD, CD, CD, CD, CD, CONTENT - C0 - C1 - CD*6];
+
+  const SHIFT_COLORS = {
+    SHIFT1:   { bg:'D9F0D9', text:'1B5E20' },
+    SHIFT2:   { bg:'FFFDE7', text:'E65100' },
+    COUPURE:  { bg:'FFFFFF', text:'333333' },
+    OFF:      { bg:'FFE0B2', text:'B71C1C' },
+  };
+
+  function hCell(txt, w) {
+    return new TableCell({ borders, width:{size:w,type:WidthType.DXA},
+      shading:{fill:'2C2C2C',type:ShadingType.CLEAR},
+      margins:{top:80,bottom:80,left:80,right:80},
+      verticalAlign: VerticalAlign.CENTER,
+      children:[new Paragraph({alignment:AlignmentType.CENTER,
+        children:[new TextRun({text:txt,font:'Arial',size:16,bold:true,color:'FFFFFF'})]
+      })]
+    });
+  }
+
+  function catCell(txt, w) {
+    return new TableCell({ borders, width:{size:w,type:WidthType.DXA},
+      shading:{fill:'EEEEFF',type:ShadingType.CLEAR},
+      margins:{top:80,bottom:80,left:60,right:60},
+      verticalAlign:VerticalAlign.CENTER,
+      children:[new Paragraph({alignment:AlignmentType.CENTER,
+        children:[new TextRun({text:txt,font:'Arial',size:15,bold:true,color:'333366'})]
+      })]
+    });
+  }
+
+  function nameCell(txt, w) {
+    return new TableCell({ borders, width:{size:w,type:WidthType.DXA},
+      shading:{fill:'FFFFFF',type:ShadingType.CLEAR},
+      margins:{top:80,bottom:80,left:120,right:80},
+      verticalAlign:VerticalAlign.CENTER,
+      children:[new Paragraph({
+        children:[new TextRun({text:txt,font:'Arial',size:15,bold:true,color:'222222'})]
+      })]
+    });
+  }
+
+  function shiftCell(shift, w) {
+    const { bg, text } = SHIFT_COLORS[shift] || SHIFT_COLORS.COUPURE;
+    const label = LABELS[shift] || shift;
+    return new TableCell({ borders, width:{size:w,type:WidthType.DXA},
+      shading:{fill:bg,type:ShadingType.CLEAR},
+      margins:{top:80,bottom:80,left:40,right:40},
+      verticalAlign:VerticalAlign.CENTER,
+      children:[new Paragraph({alignment:AlignmentType.CENTER,
+        children:[new TextRun({text:label,font:'Arial',size:15,bold:true,color:text})]
+      })]
+    });
+  }
+
+  // Build rows
+  const tableRows = [
+    new TableRow({ children: [
+      hCell('Hébergement', COLS[0]), hCell('Nom et Prénom', COLS[1]),
+      ...DAYS.map((d,i) => hCell(d, COLS[2+i]))
+    ]})
+  ];
+  employees.forEach((emp, ri) => {
+    tableRows.push(new TableRow({ children: [
+      catCell(emp.cat, COLS[0]),
+      nameCell(emp.name || '—', COLS[1]),
+      ...emp.days.map((s, di) => shiftCell(s, COLS[2+di]))
+    ]}));
+  });
+
+  // Legend row helper
+  function legendRow(label, bg, desc, textColor) {
+    const b2 = { style:BorderStyle.SINGLE, size:3, color:'CCCCCC' };
+    const b2s = {top:b2,bottom:b2,left:b2,right:b2};
+    return new TableRow({ children: [
+      new TableCell({ borders:b2s, width:{size:1200,type:WidthType.DXA},
+        shading:{fill:bg,type:ShadingType.CLEAR}, margins:{top:60,bottom:60,left:100,right:100},
+        children:[new Paragraph({alignment:AlignmentType.CENTER,
+          children:[new TextRun({text:label,font:'Arial',size:15,bold:true,color:textColor})]
+        })]
+      }),
+      new TableCell({ borders:b2s, width:{size:2400,type:WidthType.DXA},
+        shading:{fill:'FFFFFF',type:ShadingType.CLEAR}, margins:{top:60,bottom:60,left:120,right:100},
+        children:[new Paragraph({
+          children:[new TextRun({text:desc,font:'Arial',size:15,color:desc==='Variable'?'CC0000':'333333',bold:desc==='Variable'})]
+        })]
+      }),
+    ]});
+  }
+
+  const schedDoc = new Document({
+    sections:[{
+      properties:{ page:{
+        size:{ width:11906, height:16838, orientation:PageOrientation.LANDSCAPE },
+        margin:{ top:720, right:720, bottom:720, left:720 }
+      }},
+      children:[
+        new Paragraph({ alignment:AlignmentType.CENTER, spacing:{before:0,after:40},
+          children:[new TextRun({text:'~ ~ ~', font:'Arial', size:24, color:'555555'})]
+        }),
+        new Paragraph({ alignment:AlignmentType.CENTER, spacing:{before:0,after:240},
+          children:[new TextRun({text:'WHITE DUNE CANYON', font:'Arial', size:24, bold:true, color:'222222', characterSpacing:80})]
+        }),
+        new Table({ width:{size:CONTENT,type:WidthType.DXA}, columnWidths:[CONTENT],
+          rows:[new TableRow({children:[
+            new TableCell({ borders:outerBorders, width:{size:CONTENT,type:WidthType.DXA},
+              shading:{fill:'FFFFFF',type:ShadingType.CLEAR},
+              margins:{top:120,bottom:120,left:200,right:200},
+              children:[new Paragraph({alignment:AlignmentType.CENTER,
+                children:[new TextRun({text:'EQUIPE RESTAURANT',font:'Arial',size:26,bold:true,color:'222222',characterSpacing:60})]
+              })]
+            })
+          ]})]
+        }),
+        new Paragraph({spacing:{before:180,after:0}, children:[new TextRun('')]}),
+        new Table({ width:{size:CONTENT,type:WidthType.DXA}, columnWidths:COLS, rows:tableRows }),
+        new Paragraph({ alignment:AlignmentType.CENTER, spacing:{before:120,after:120},
+          children:[new TextRun({text:"Les horaires de coupure sont fixés avec le chef de service, en coordination avec la direction.",
+            font:'Arial', size:15, italics:true, color:'C62828'})]
+        }),
+        new Paragraph({spacing:{before:120,after:60}, children:[new TextRun('')]}),
+        new Table({ width:{size:3600,type:WidthType.DXA}, columnWidths:[1200,2400],
+          rows:[
+            legendRow('COUPURE','FFFFFF','Variable','333333'),
+            legendRow('SHIFT 1','D9F0D9','08 H 00 – 16 H 30','1B5E20'),
+            legendRow('SHIFT 2','FFFDE7','15 H 30 – Fin de Service','E65100'),
+            legendRow('OFF','FFE0B2','Repos','B71C1C'),
+          ]
+        }),
+      ]
+    }]
+  });
+
+  try {
+    const blob = await Packer.toBlob(schedDoc);
+    saveAs(blob, 'WhiteDuneCanyon_Planning.docx');
+    showToast('✓ Fichier .docx téléchargé !');
+  } catch(e) {
+    showToast('Erreur export: ' + e.message);
+    console.error(e);
+  }
+}
+
+render();
+</script>
+</body>
+</html>
